@@ -8,12 +8,14 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import Backdrop from '@mui/material/Backdrop';
 import PhoneOutlined from '@mui/icons-material/PhoneOutlined';
 import PersonOutlined from '@mui/icons-material/PersonOutlined';
 import EmailOutlined from '@mui/icons-material/EmailOutlined';
 import LockOutlined from '@mui/icons-material/LockOutlined';
 import MicIcon from '@mui/icons-material/Mic';
 import StopIcon from '@mui/icons-material/Stop';
+import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import FormHelperText from '@mui/material/FormHelperText'
@@ -56,21 +58,26 @@ export default class SignUp extends React.Component {
       submitted: false,
       blobURL: '',
       isRecording: '',
-      time: 0
+      time: 0,
+      saving:false
     }
 
   }
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.validate()) {
-      console.log(this.state)
+      this.setState({saving:true})
       let data = {
         name: this.state.name,
         email: this.state.email,
-        password: this.state.password
+        password: this.state.password,
+        audio:this.state.userAudio,
+        acceptedTnC:this.state.acceptedTnC,
+        phoneNumber:this.state.phoneNumber
       }
       axios.post('http://localhost:3001/users', data).then(result => {
-        console.log(result);
+        this.props.userName(this.state.name)
+        this.props.logged(true)
       }).catch(e => {
         console.log(e);
       })
@@ -113,8 +120,13 @@ export default class SignUp extends React.Component {
 
   }
   validate() {
-    let regex='^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*]).{8,}$';
     if (this.state.repassword != this.state.password) {
+      return false;
+    }
+    if(this.state.phoneNumber.length!=10){
+      return false;
+    }
+    if(this.state.userAudio.length==0){
       return false;
     }
     return true;
@@ -135,9 +147,51 @@ export default class SignUp extends React.Component {
 
     }
   }
+  passwordValidation=()=> {
+    let value=this.state.password;
+    const isWhitespace = /^(?=.*\s)/;
+    if (isWhitespace.test(value)) {
+      return "Password must not contain Whitespaces.";
+    }
+
+
+    const isContainsUppercase = /^(?=.*[A-Z])/;
+    if (!isContainsUppercase.test(value)) {
+      return "Password must have at least one Uppercase Character.";
+    }
+
+
+    const isContainsLowercase = /^(?=.*[a-z])/;
+    if (!isContainsLowercase.test(value)) {
+      return "Password must have at least one Lowercase Character.";
+    }
+
+
+    const isContainsNumber = /^(?=.*[0-9])/;
+    if (!isContainsNumber.test(value)) {
+      return "Password must contain at least one Digit.";
+    }
+
+
+    const isContainsSymbol =
+      /^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹])/;
+    if (!isContainsSymbol.test(value)) {
+      return "Password must contain at least one Special Symbol.";
+    }
+
+
+    const isValidLength = /^.{8,}$/;
+    if (!isValidLength.test(value)) {
+      return "Password length should be greater than or equal to 8";
+    }
+    return null;
+  }
+ 
+
 
   render() {
     return (
+      
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
@@ -208,8 +262,8 @@ export default class SignUp extends React.Component {
                     id="password"
                     inputProps={{minLength:8}}
                     autoComplete="new-password"
-                    helperText={this.state.error ? 'Password is mandatory' : ''}
-                    error={this.state.error && !this.state.password}
+                    helperText={this.state.password!='' ? this.passwordValidation() : ''}
+                    error={this.state.password!='' && this.passwordValidation()}
                     onChange={this.handleFormChange}
                     InputProps={{
                       startAdornment: (
@@ -255,7 +309,6 @@ export default class SignUp extends React.Component {
                     onChange={this.handleFormChange}
                     type='number'
                     value={this.state.phoneNumber}
-                    autoComplete={false}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -281,6 +334,10 @@ export default class SignUp extends React.Component {
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <div>tell us yourself in some words</div>
+                  <FormHelperText error>
+                    {this.state.error && this.state.userAudio.length==0 ? "voice introduction is mandatory" : ''}
+
+                  </FormHelperText>
 
                 </Grid>
                 <Grid item xs={12} sm={8}>
@@ -311,6 +368,12 @@ export default class SignUp extends React.Component {
               </Button>
             </Box>
           </Box>
+          <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={this.state.saving}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
         </Container>
       </ThemeProvider>
     );

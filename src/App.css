@@ -11,6 +11,21 @@
 
 
 }
+.menu{
+  width: calc(100% - 20px);
+    text-align: end;
+    background-color: #1976d2;
+    height: fit-content;
+    padding: 5px 10px;
+}
+.welcome{
+  font-size: 50px;
+    margin-top: auto;
+    text-align: center;
+}
+.menu>Button:hover{
+  background-color: #196bbb;
+}
 html, body {
   height: 100%;
 }
