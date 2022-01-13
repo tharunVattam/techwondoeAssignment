@@ -59,21 +59,21 @@ export default class SignUp extends React.Component {
       blobURL: '',
       isRecording: '',
       time: 0,
-      saving:false
+      saving: false
     }
 
   }
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.validate()) {
-      this.setState({saving:true})
+      this.setState({ saving: true })
       let data = {
         name: this.state.name,
         email: this.state.email,
         password: this.state.password,
-        audio:this.state.userAudio,
-        acceptedTnC:this.state.acceptedTnC,
-        phoneNumber:this.state.phoneNumber
+        audio: this.state.userAudio,
+        acceptedTnC: this.state.acceptedTnC,
+        phoneNumber: this.state.phoneNumber
       }
       axios.post('http://localhost:3001/users', data).then(result => {
         this.props.userName(this.state.name)
@@ -123,10 +123,10 @@ export default class SignUp extends React.Component {
     if (this.state.repassword != this.state.password) {
       return false;
     }
-    if(this.state.phoneNumber.length!=10){
+    if (this.state.phoneNumber.length != 10) {
       return false;
     }
-    if(this.state.userAudio.length==0){
+    if (this.state.userAudio.length == 0) {
       return false;
     }
     return true;
@@ -137,8 +137,8 @@ export default class SignUp extends React.Component {
     if (field == 'acceptedTnC') {
       this.setState({ [field]: !this.state.acceptedTnC })
     }
-    else if(field=='phoneNumber'){
-      if(value.length < 11 && !value.includes('-')){
+    else if (field == 'phoneNumber') {
+      if (value.length < 11 && !value.includes('-')) {
         this.setState({ [field]: value })
       }
     }
@@ -147,8 +147,8 @@ export default class SignUp extends React.Component {
 
     }
   }
-  passwordValidation=()=> {
-    let value=this.state.password;
+  passwordValidation = () => {
+    let value = this.state.password;
     const isWhitespace = /^(?=.*\s)/;
     if (isWhitespace.test(value)) {
       return "Password must not contain Whitespaces.";
@@ -186,12 +186,12 @@ export default class SignUp extends React.Component {
     }
     return null;
   }
- 
+
 
 
   render() {
     return (
-      
+
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
@@ -260,10 +260,10 @@ export default class SignUp extends React.Component {
                     label="Password"
                     type="password"
                     id="password"
-                    inputProps={{minLength:8}}
+                    inputProps={{ minLength: 8 }}
                     autoComplete="new-password"
-                    helperText={this.state.password!='' ? this.passwordValidation() : ''}
-                    error={this.state.password!='' && this.passwordValidation()}
+                    helperText={this.state.password != '' ? this.passwordValidation() : ''}
+                    error={this.state.password != '' && this.passwordValidation()}
                     onChange={this.handleFormChange}
                     InputProps={{
                       startAdornment: (
@@ -303,9 +303,9 @@ export default class SignUp extends React.Component {
                     name="phoneNumber"
                     label="Enter phone number"
                     id="phoneNumber"
-                    helperText={this.state.error && this.state.phoneNumber.length!=10 ?
+                    helperText={this.state.error && this.state.phoneNumber.length != 10 ?
                       'Please enter 10 digit valid phone number' : ''}
-                    error={this.state.error && this.state.phoneNumber.length!=10}
+                    error={this.state.error && this.state.phoneNumber.length != 10}
                     onChange={this.handleFormChange}
                     type='number'
                     value={this.state.phoneNumber}
@@ -315,7 +315,7 @@ export default class SignUp extends React.Component {
                           <PhoneOutlined />
                         </InputAdornment>
                       ),
-                      
+
                     }}
 
                   />
@@ -335,7 +335,7 @@ export default class SignUp extends React.Component {
                 <Grid item xs={12}>
                   <div>tell us yourself in some words</div>
                   <FormHelperText error>
-                    {this.state.error && this.state.userAudio.length==0 ? "voice introduction is mandatory" : ''}
+                    {this.state.error && this.state.userAudio.length == 0 ? "voice introduction is mandatory" : ''}
 
                   </FormHelperText>
 
@@ -369,11 +369,11 @@ export default class SignUp extends React.Component {
             </Box>
           </Box>
           <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={this.state.saving}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={this.state.saving}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
         </Container>
       </ThemeProvider>
     );

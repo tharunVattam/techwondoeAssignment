@@ -11,6 +11,13 @@
 
 
 }
+.header{
+  height: "100%";
+  overflow: "auto"
+}
+.headerItem{
+  color:white
+}
 .menu{
   width: calc(100% - 20px);
     text-align: end;
@@ -22,6 +29,7 @@
   font-size: 50px;
     margin-top: auto;
     text-align: center;
+    color:#282c34;
 }
 .menu>Button:hover{
   background-color: #196bbb;
